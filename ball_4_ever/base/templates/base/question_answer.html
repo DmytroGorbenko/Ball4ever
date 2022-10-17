@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Answer question</title>
+
+</head>
+
+{% block main %}
+<div class="form_first">
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form|crispy}}
+        {{ form.media }}
+        <button style="color: white; text-decoration: none;" class="btn btn-dark"  type="submit" >Post Answer</button>
+        <a style="color: black;" href="{% url 'base:question_details' view.kwargs.pk %}" class="btn btn-light" >Cancel</a>
+    </form>
+</div>
+{% endblock %}
+</html>
+
+

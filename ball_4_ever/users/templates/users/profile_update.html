@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update profile</title>
+</head>
+
+{% block main %}
+    <div class="form_first">
+        <form action='' method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{u_form|crispy}}
+            {{p_form|crispy}}
+            <button type="submit" class="btn btn-dark">Update</button>
+        </form>
+    </div>
+{% endblock %}
+
+</html>

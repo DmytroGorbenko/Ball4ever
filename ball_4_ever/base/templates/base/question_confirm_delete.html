@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete question</title>
+</head>
+
+{% block main %}
+<div class="form_first center">
+    <h2>Do you wanna delete this question? <b>{{ question.title }}</b></h2>
+    <form action="" method="POST">
+            {% csrf_token %}
+        <div>
+            <button class="btn btn-dark white-text" type="submit">Delete</button>
+            <a href="{% url 'base:question_details' question.id %}" class="btn btn-light black-text" >Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+</html>

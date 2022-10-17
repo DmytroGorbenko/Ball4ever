@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Post {{post.id}}</title>
+</head>
+
+{% block main %}
+    <div class="post">
+        <a style="text-decoration: none; " class="btn btn-dark" href="{% url 'posts:my_posts_list' %}"><i class="bi bi-reply-fill "><span>My Posts</span></i></a>
+        <a style="text-decoration: none; " class="btn btn-dark" href="{% url 'posts:posts_list' %}"><i class="bi bi-reply-all-fill "><span>All Posts</span></i></a>
+        <div class="break-word">
+            <div class="center">
+                <h4>{{ post.title }}</h4>
+                <h4>{{post.category}}</h4>
+                <img style="border-radius: 50%" src="{{ post.image.url }}">
+            </div>
+            <h5>{{ post.content|safe}}</h5>
+        </div>
+        <h6>Posted by: <a class="black-text" href="{% url 'base:profile' post.user.id %}">{{ post.user.username }}</a></h6>
+        <h6>On: {{ post.date_created }} (UTC)</h6>
+        <div class="container-1 left">
+            <div class="f-card content">
+                    <div class="text-left">
+                        <span class="pointer">
+                            {% if request.user in post.likes.users.all%}
+                                <a class="black-text" href="{% url 'posts:requirement_post_vote' post.id 'like' %}"><i class="bi-hand-thumbs-up-fill"></i><span>{{ post.get_total_likes }}</span></a>
+                            {% else %}
+                            <!--not liked-->
+                                <a class="black-text" href="{% url 'posts:requirement_post_vote' post.id 'like' %}"><i class="bi-hand-thumbs-up"></i>
+                                    <span>{% if post.get_total_likes  %}{{post.get_total_likes}} {% else %} 0 {% endif %}</span></a>
+                            {% endif %}
+                        </span>
+                        <span class="ml-3 pointer">
+                            {% if request.user in post.dis_likes.users.all %}
+                                <a class="black-text" href="{% url 'posts:requirement_post_vote' post.id 'dis_like' %}"><i class="bi-hand-thumbs-down-fill"></i><span>{{post.get_total_dis_likes}}</span></a>
+                            {% else %}
+                                <a class="black-text" href="{% url 'posts:requirement_post_vote' post.id 'dis_like' %}"><i class="bi-hand-thumbs-down"></i><span>{% if post.get_total_dis_likes  %} {{post.get_total_dis_likes}} {% else %} 0 {% endif %}</span></a>
+                            {% endif %}
+                        </span>
+                    </div>
+            </div>
+        </div>
+        {% if post.user.username == user.username %}
+            <a style="text-decoration: none; " class="btn btn-outline-danger" href="{% url 'posts:post_delete' post.id%}">&#x2716;</a>
+            <a style="text-decoration: none; " class="btn btn-outline-success" href="{% url 'posts:post_update' post.id%}">&#x270E;</a>
+        {% endif %}
+        <a class="btn btn-dark" href="{% url 'posts:post_comment' post.id%}" style="text-decoration: none;">Comment</a>
+
+        <br><hr><h2>Comments...</h2><br>
+
+        {% if not post.comment.all %}
+            <h3>No Comments yet... </h3>
+        {% else %}
+            {% for comment in post.comment.all|dictsortreversed:'date_created' %}
+                <hr>
+                <h3 style="font-weight: normal; font-size: 25px;">{{comment.content|safe}}</h3>
+                <h3 style="font-size: 15px;">Commented on: {{comment.date_created}} (UTC)</h3>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <br><br>
+{% endblock %}
+
+</html>

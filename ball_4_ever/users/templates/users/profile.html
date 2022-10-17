@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+
+{% block main %}
+    <div class="profile">
+        <div class="image_part">
+            <img style="border-radius: 50%" src="{{ user.profile.image.url }}">
+            <div class="center prof-bar">
+                <h3>{{ current.username }}</h3>
+
+                {% if user.id == current.id %}
+                    <br>
+                    <a href="/profile/update" class="btn btn-dark">Change</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="info">
+            <div class="break-word">
+                <h4>Bio:</h4>
+                <h5>{{ user.profile.bio|title }}</h5>
+            </div>
+            <br>
+            <h4>Phone number:</h4>
+            <h5>{{ user.profile.phone|title }}</h5>
+            <br>
+            <h4>Email:</h4>
+            <h5>{{ user.email }}</h5>
+            <br>
+            <h4>Posts made: {{ posts_count }}  |  Questions asked: {{question_count}}</h4>
+        </div>
+    </div>
+    <div>
+        {% if not posts %}
+            <div class="question_on_list">
+                <h3>Seems to be nothing here...</h3>
+            </div>
+        {% else %}
+        <div class="container">
+            <div class="row gx-5 row-cols-3">
+                {% for post in posts %}
+                    <div class="col post_on_list">
+                        <div class="break-word">
+                                {% if post.title|wordcount <= 3 %}
+                                    <h5><a style="color: black" href="{% url 'posts:post_details' post.id%}">{{ post.title|safe }}</a></h5>
+                                {% else %}
+                                    <h5><a style="color: black" href="{% url 'posts:post_details' post.id%}">{{ post.title|truncatewords:3|safe }}</a></h5>
+                                {% endif %}
+                        </div>
+                        <h4>{{post.category}}</h4>
+                        <img style="border-radius: 50%" src="{{ post.image.url }}">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br><br>
+        {% endif %}
+    </div>
+{% endblock %}

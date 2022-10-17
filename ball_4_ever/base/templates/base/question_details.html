@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Question {{question.id}}</title>
+</head>
+
+{% block main %}
+    <div class="form_first">
+        <a style="text-decoration: none; " class="btn btn-dark" href="{% url 'base:my_questions_list' %}"><i class="bi bi-reply-fill "><span>My Questions</span></i></a>
+        <a style="text-decoration: none; " class="btn btn-dark" href="{% url 'base:questions_list' %}"><i class="bi bi-reply-all-fill "><span>All Questions</span></i></a>
+        <div class="break-word">
+            <h4>{{ question.title }}</h4>
+            <h5>{{ question.content|safe}}</h5>
+        </div>
+        <h6>Asked by: <a class="black-text" href="{% url 'base:profile' question.user.id %}">{{ question.user.username }}</a></h6>
+        <h6>On: {{ question.date_created }} (UTC)</h6>
+        {% if question.user.username == user.username %}
+            <a style="text-decoration: none; " class="btn btn-outline-danger" href="{% url 'base:question_delete' question.id %}">&#x2716;</a>
+            <a style="text-decoration: none; " class="btn btn-outline-success" href="{% url 'base:question_update' question.id %}">&#x270E;</a>
+        {% endif %}
+        <a class="btn btn-dark" href="{% url 'base:question_comment' question.id %}" style="text-decoration: none;">Answer Question</a>
+
+        <br><hr><h2>Answers...</h2>
+        <div>
+            <form action="" method="GET">
+                <div>
+                    <label for="category">Sort by: </label>
+                    <select style="width: 150px" id="category" class="form-control" name="category">
+                        <option value="Votes">Votes(default)</option>
+                        <option value="time_desc">Recent</option>
+                        <option value="time_asc">Oldest</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-dark">Sort</button>
+            </form>
+        </div>
+        <br>
+
+        {% if not question.comment.all %}
+            <h3>No Answers yet... </h3>
+        {% else %}
+            {% for comment in comments%}
+                <hr>
+                <div class="container-1 left">
+                    <div class="f-card content">
+                    <h3 style="font-weight: normal; font-size: 25px;">{{comment.answer|safe}}</h3>
+                    <h3 style="font-size: 15px;">Answered on: {{comment.date_created}} (UTC)</h3>
+                        <div class="text-left">
+                            <span class="pointer">
+                            {% if request.user in comment.likes.users.all%}
+                                <a class="black-text" href="{% url 'base:requirement_comment_vote' comment.id 'like' %}"><i class="bi-hand-thumbs-up-fill"></i><span>{{ comment.get_total_likes }}</span></a>
+                            {% else %}
+                            <!--not liked-->
+                                <a class="black-text" href="{% url 'base:requirement_comment_vote' comment.id 'like' %}"><i class="bi-hand-thumbs-up"></i>
+                                    <span>{% if comment.get_total_likes  %}{{comment.get_total_likes}} {% else %} 0 {% endif %}</span></a>
+                            {% endif %}
+                            </span>
+                            <span class="ml-3 pointer">
+                            {% if request.user in comment.dis_likes.users.all %}
+                                        <a class="black-text" href="{% url 'base:requirement_comment_vote' comment.id 'dis_like' %}"><i class="bi-hand-thumbs-down-fill"></i><span>{{comment.get_total_dis_likes}}</span></a>
+                            {% else %}
+                                    <a class="black-text" href="{% url 'base:requirement_comment_vote' comment.id 'dis_like' %}"><i class="bi-hand-thumbs-down"></i><span>{% if comment.get_total_dis_likes  %} {{comment.get_total_dis_likes}} {% else %} 0 {% endif %}</span></a>
+                            {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <br><br>
+{% endblock %}
+
+</html>

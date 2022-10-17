@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Questions</title>
+</head>
+
+{% block main %}
+    <div class="question_on_list list_bar">
+        <div>
+            <form action="" method="GET">
+                <div>
+                    <input type="text" id="search-title" name="search-title" placeholder="Title contains...">
+                </div>
+                <button type="submit" class="btn btn-dark">Search</button>
+            </form>
+        </div>
+        <div class="button">
+            {% if user.is_authenticated %}
+                <button class="btn btn-dark"><a href="{% url 'base:question_create'%}" style="color: white; text-decoration: none;">Ask question</a></button>
+            {% else %}
+                <button class="btn btn-dark"><a href="{% url 'base:login' %}" style="color: white; text-decoration: none;">Login to ask!</a></button>
+            {% endif %}
+        </div>
+    </div>
+    <div>
+        {% if not questions %}
+            <div class="question_on_list">
+                <h3>Seems to be nothing here...</h3>
+            </div>
+        {% else %}
+            {% for question in questions %}
+                <div class="question_on_list">
+                    <div class="break-word">
+                        <h4><a style="color: black" href="{% url 'base:question_details' question.id%}">{{ question.title }}</a></h4>
+                    </div>
+                    <div class="break-word">
+                        {% if question.content|wordcount <= 10 %}
+                            <h5>{{ question.content|safe}}</h5>
+                        {% else %}
+                            <h5>{{ question.content|truncatewords:10|safe}} <a style="color: black" href="{% url 'base:question_details' question.id%}"> Read More</a></h5>
+                        {% endif %}
+                    </div>
+                    <div id="textbox">
+                        <h6 style="float: left">Asked by: <a class="black-text" href="{% url 'base:profile' question.user.id %}">{{ question.user.username }}</a></h6>
+                        <h6 style="float: right">On: {{ question.date_created }} (UTC)</h6>
+                        <div style="clear: both;"></div>
+                    </div>
+                </div>
+            {% endfor %}
+        <br><br>
+        {% endif %}
+    </div>
+{% endblock %}
+</html>

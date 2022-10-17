@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block main %}
+    <div class="question_on_list">
+        <h2>Welcome to the Ball4Ever, hopper!</h2>
+        <h3>The one and only web app, where you can ask and post anything about the best game with the ball ever created!</h3>
+        <hr>
+        <h3>Here are some of the recent content ;)</h3>
+    </div>
+    <div class="question_on_list">
+        <h4 class="center">Questions...</h4>
+        <hr>
+        {% for question in questions %}
+            <div>
+                <div class="break-word">
+                    <h4><a style="color: black" href="{% url 'base:question_details' question.id%}">{{ question.title }}</a></h4>
+                    {% if question.content|wordcount <= 10 %}
+                        <h5>{{ question.content|safe}}</h5>
+                    {% else %}
+                        <h5>{{ question.content|truncatewords:10|safe}} <a style="color: black" href="{% url 'base:question_details' question.id%}">Read More</a></h5>
+                    {% endif %}
+                </div>
+                <div id="textbox">
+                    <h6 style="float: left">Asked by: <a class="black-text" href="{% url 'base:profile' question.user.id %}">{{ question.user.username }}</a></h6>
+                    <h6 style="float: right">On: {{ question.date_created }} (UTC)</h6>
+                    <div style="clear: both;"></div>
+	            </div>
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="question_on_list">
+        <h4 class="center">Posts...</h4>
+    </div>
+    <div class="container">
+        <div class="row gx-5 row-cols-3">
+            {% for post in posts %}
+                <div class="col post_on_list">
+                    <div class="break-word">
+                        {% if post.title|wordcount <= 3 %}
+                            <h5><a style="color: black" href="{% url 'posts:post_details' post.id%}">{{ post.title|safe }}</a></h5>
+                        {% else %}
+                            <h5><a style="color: black" href="{% url 'posts:post_details' post.id%}">{{ post.title|truncatewords:3|safe }}</a></h5>
+                        {% endif %}
+                    </div>
+                    <h4>{{post.category}}</h4>
+                    <img style="border-radius: 50%" src="{{ post.image.url }}">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if not user.is_authenticated %}
+        <div class="question_on_list">
+            <h4><a class="black-text" href="/login">Login</a> or <a class="black-text" href="/register">Register</a> to start!</h4>
+        </div>
+    {% endif %}
+    <br><br>
+{% endblock %}
